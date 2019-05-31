@@ -19,9 +19,9 @@
     <script type="text/javascript">
         var MaxHeightControl = 6;
         var MinHeightControl = -6;
-        var scene, camera, renderer, controls, MainJet, GroupAliens, collidableMeshList = [], MainJetCube,LastAliens;
-		var mytime=0;
-		setInterval(function() { mytime+=100; }, 100);
+        var scene, camera, renderer, controls, GroupAliens, collidableMeshList = [], MainJetCube, LastAliens;
+        var mytime = 0;
+        setInterval(function () { mytime += 100; }, 100);
         init();
         animate();
         // once everything is loaded, we run our Three.js stuff.
@@ -34,8 +34,7 @@
             var aspect = window.innerWidth / window.innerHeight;
             camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 500);
             camera.position.z = -12;
-            camera.position.y = 0;
-            camera.position.x = 0;
+      
             controls = new THREE.OrbitControls(camera);
             controls.enabled = false;
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -43,16 +42,13 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
             JetModel(function (results) {
-                MainJet = results;
+                
                 var geometry = new THREE.BoxGeometry(3, 3, 3);
                 var material = new THREE.MeshBasicMaterial({
-                    color: 0xffffff,
                     transparent: true,
                     opacity: 0,
-                    overdraw: 0.5
                 });
                 MainJetCube = new THREE.Mesh(geometry, material);
-                MainJetCube.position.z = 0;
                 MainJetCube.position.x = 13;
                 MainJetCube.add(results);
                 scene.add(MainJetCube);
@@ -61,30 +57,28 @@
             AliensModel(10, function (results) {
                 var Move = -20;
                 var prvrand = -20;
-				var Counter=0;
-				var LastObj=results.length -1;
+                var Counter = 0;
+                var LastObj = results.length - 1;
                 results.forEach(function (obj) {
-				
+
                     var geometry = new THREE.BoxGeometry(2, 2, 2);
                     var material = new THREE.MeshBasicMaterial({
-                        color: 0xffffff,
                         transparent: true,
                         opacity: 0,
-                        overdraw: 0.5
                     });
                     var ObjGeo = new THREE.Mesh(geometry, material);
-					if(Counter==LastObj){
-					LastAliens=ObjGeo;
-					}
+                    if (Counter == LastObj) {
+                        LastAliens = ObjGeo;
+                    }
                     var rnda = getRndInteger(-100, prvrand)
                     prvrand = rnda + Move;
-                    ObjGeo.position.x = prvrand;      
-                    ObjGeo.position.y = getRndInteger(MinHeightControl, MaxHeightControl); 
+                    ObjGeo.position.x = prvrand;
+                    ObjGeo.position.y = getRndInteger(MinHeightControl, MaxHeightControl);
                     Move -= 10;
                     ObjGeo.add(obj)
                     GroupAliens.add(ObjGeo);
                     collidableMeshList.push(ObjGeo)
-					Counter++;
+                    Counter++;
                 });
             });
             scene.add(GroupAliens);
@@ -96,17 +90,17 @@
         }
         function animate() {
             GroupAliens.position.x += 0.7;
-			if(LastAliens != undefined && LastAliens.getWorldPosition().x>=50){
-				alert("You Win,score="+mytime);
-				window.location.href = window.location.pathname + window.location.search + window.location.hash;
-			}
+            if (LastAliens != undefined && LastAliens.getWorldPosition().x >= 50) {
+                alert("You Win,score=" + mytime);
+                window.location.href = window.location.pathname + window.location.search + window.location.hash;
+            }
             // controls.update();
             requestAnimationFrame(animate);
             update();
         }
         function JetModel(callback) {
             var loader = new THREE.ObjectLoader();
-            var model;
+
             loader.load("Models/MainJet/f-2-fighter-jet.json", function (obj) {
                 obj.scale.set(0.3, 0.3, 0.3);
                 obj.rotation.z = -Math.PI / 2;
@@ -148,7 +142,7 @@
                     var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
                     var collisionResults = ray.intersectObjects(collidableMeshList);
                     if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-                        alert("You Lose,score="+mytime);
+                        alert("You Lose,score=" + mytime);
                         window.location.href = window.location.pathname + window.location.search + window.location.hash;
                     }
                 }
